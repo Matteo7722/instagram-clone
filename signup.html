@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="signup.css">
+  <title>Instagram Clone - Sign Up</title>
+  
+</head>
+<body>
+  <div class="signup-container">
+    <h1>Instagram</h1>
+    <form id="signupForm">
+      <input type="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+      </label>
+      <button type="submit">Sign Up</button>
+      <p class="error-message" id="errorMsg"></p>
+    </form>
+    <p class="signin-text">Already have an account? <a href="signin.html">Sign In</a></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyApisV5KyVgR_EwMObGF-JOGG2RuRrxrCM",
+      authDomain: "instagram-clone-b55d3.firebaseapp.com",
+      projectId: "instagram-clone-b55d3",
+      storageBucket: "instagram-clone-b55d3.firebasestorage.app",
+      messagingSenderId: "78345980685",
+      appId: "1:78345980685:web:ac55647d1da02c49723e44",
+      measurementId: "G-FWB851BFS7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+
+    const signupForm = document.getElementById('signupForm');
+    const errorMsg = document.getElementById('errorMsg');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const togglePasswordCheckbox = document.getElementById('togglePassword');
+
+    // Toggle password visibility for both password fields
+    togglePasswordCheckbox.addEventListener('change', () => {
+      const type = togglePasswordCheckbox.checked ? 'text' : 'password';
+      passwordInput.type = type;
+      confirmPasswordInput.type = type;
+    });
+
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      errorMsg.textContent = '';
+
+      const email = signupForm.querySelector('input[type="email"]').value;
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (password !== confirmPassword) {
+        errorMsg.textContent = "Passwords do not match.";
+        return;
+      }
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          localStorage.setItem('username', user.email);
+          window.location.href = "home.html"; // Redirect after successful signup
+        })
+        .catch((error) => {
+          errorMsg.textContent = error.message;
+        });
+    });
+  </script>
+</body>
+</html>
